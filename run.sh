@@ -1,0 +1,1 @@
+docker run -p 11337:1337 -p 11338:3338 -v ./ext:/home/user/.ext --cap-add CAP_SYS_ADMIN webext-ctf:1.0

